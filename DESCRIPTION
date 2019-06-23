@@ -6,6 +6,7 @@ Authors@R: person("Artem", "Zefirov", email = "zefirovart@gmail.com", role = c("
 Description: Provides the tools for R dataframes conversion into flextable objects, the design of which can be adjusted flexibly. Generated objects with appropriate captions can be exported into Word files yeilding the ready-made part of any official report.
 Depends: R (>= 3.4.0)
 Imports:
+	stats (>= 3.4.0),
 	magrittr (>= 1.5),
 	tibble (>= 2.0.1),
 	dplyr (>= 0.7.8),

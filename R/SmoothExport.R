@@ -38,16 +38,16 @@ SetBorders <- function(df_flex){
 #'
 #' @return The flextable object with merged cells
 MergeCells <- function(df_flex, is_footer, columns, rows, cells){
+  if(!is.null(cells)){
+    for(cell in cells){
+      df_flex <- flextable::merge_at(df_flex, i = cell$rows, j = cell$columns, part = "body")
+    }
+  }
   if(!is.null(columns)){
     df_flex <- flextable::merge_v(df_flex, j = columns, part = "body")
   }
   if(!is.null(rows)){
     df_flex <- flextable::merge_h(df_flex, i = rows, part = "body")
-  }
-  if(!is.null(cells)){
-    for(cell in cells){
-        df_flex <- flextable::merge_at(df_flex, i = cell$rows, j = cell$columns, part = "body")
-    }
   }
 
   #merge header fully
@@ -98,16 +98,16 @@ SetStyle <- function(df_flex, font, rows_as_footnote_title, rows_as_inner_header
 
   #types of styles
   styles = tibble::lst(body = tibble::lst(cell = officer::fp_cell(border = officer::fp_border(color = "#000000")),
-                                          cell_inner = update(cell, background.color = "#F0F0F0"),
-                                          cell_dr = update(cell, background.color = "#FFE599"),
+                                          cell_inner = stats::update(cell, background.color = "#F0F0F0"),
+                                          cell_dr = stats::update(cell, background.color = "#FFE599"),
                                           text = officer::fp_text(font.size = font, bold = FALSE, font.family = "Times New Roman"),
                                           par = officer::fp_par(text.align = "center", padding.left = 2L, padding.right = 2L, padding.bottom = 0L, padding.top = 0L),
-                                          par_left = update(par, text.align = "left")),
+                                          par_left = stats::update(par, text.align = "left")),
                        header = tibble::lst(cell = officer::fp_cell(border = officer::fp_border(color = "#000000")),
-                                            text = update(body$text, bold = TRUE)),
+                                            text = stats::update(body$text, bold = TRUE)),
                        footer = tibble::lst(cell = officer::fp_cell(border.left = officer::fp_border(color = "#000000"), border.right = officer::fp_border(color = "#000000")),
-                                            text = update(body$text, italic = TRUE),
-                                            par = update(body$par, text.align = "justify")))
+                                            text = stats::update(body$text, italic = TRUE),
+                                            par = stats::update(body$par, text.align = "justify")))
 
 
   # body styles -------------------------------------------------------------
@@ -147,13 +147,15 @@ SetStyle <- function(df_flex, font, rows_as_footnote_title, rows_as_inner_header
 
   #for dropouts
   if(!is.null(cells_color)){
-    df_flex <- flextable::style(df_flex,
-                                i = cells_color$row,
-                                j = cells_color$column,
-                                pr_c = styles$body$cell_dr,
-                                pr_p = styles$body$par,
-                                pr_t = styles$body$text,
-                                part = "body")
+    for (cell in cells_color){
+      df_flex <- flextable::style(df_flex,
+                                  i = cell$row,
+                                  j = cell$column,
+                                  pr_c = styles$body$cell_dr,
+                                  pr_p = styles$body$par,
+                                  pr_t = styles$body$text,
+                                  part = "body")
+    }
   }
 
   #bolding seelected borders
@@ -168,7 +170,7 @@ SetStyle <- function(df_flex, font, rows_as_footnote_title, rows_as_inner_header
   if(!is.null(rows_p_value_color)){
     for (row in rows_p_value_color){
       for (col in seq_len(ncol(df_flex$body$dataset))){
-        if(grepl("(p \\= 0,0([0-4][0-9]?|05)|p < 0\\,001)", df_flex$body$dataset[row, col])){
+        if(grepl("(p \\= 0(,|\\.)0([0-4][0-9]?|05)|p < 0(,|\\.)001)", df_flex$body$dataset[row, col])){
           df_flex <- flextable::style(df_flex,
                                       i = row,
                                       j = col,
@@ -225,7 +227,7 @@ SetStyle <- function(df_flex, font, rows_as_footnote_title, rows_as_inner_header
 #' \item{\strong{rows_to_merge}}{indexes of rows to merge vertically in a body part}
 #' \item{\strong{columns_to_merge}}{indexes of columns to merge horizontally in a body part}
 #' \item{\strong{cells_to_merge}}{a list of elements represanting the rectangular area of the dataframe body to merge. Each element is a list consisting of two subelements: \emph{rows} and \emph{columns}, each of which is a range of rows or columns respectively defining the rectangular. All cells in either footer or header parts with the same value are merged automatically}
-#' \item{\strong{table_width}}{an array of column widths. If omitted, columns widths are uniformly distributed provided that the table total width equals to 6.54 cm corresponding to a Word vertical oriented table}
+#' \item{\strong{table_width}}{an array of column widths. If omitted, columns widths are uniformly distributed provided that the table total width equals to 6.54 inches corresponding to a Word vertical oriented table}
 #' \item{\strong{font}}{font size of all data in a table. If omitted, 10 points is used}
 #' \item{\strong{rows_as_footnote_title}}{indexes of rows corresponding to the local titles which should be highlighted with italic font (Note, Designation, etc.) in a footer part. The value of this element doesn't effect on the generated flextable in case no footer is provided. If omitted, the first row is highlighted}
 #' \item{\strong{columns_left_align}}{indexes of columns to left align in a body part}
@@ -247,26 +249,57 @@ SetStyle <- function(df_flex, font, rows_as_footnote_title, rows_as_inner_header
 #'                                   row2 = rep("Nothing special for this table", ncol(t_data))))
 #' CreateFLX(t_df_struct)
 #'
-#'
+#'t_data <- dplyr::mutate_all(mtcars[1:3, 1:5], as.character) %>%
+#'          dplyr::add_row(mpg = "population A", cyl = "population A", disp = "population A", hp = "population A", drat = "population A")  %>%
+#'          dplyr::bind_rows(dplyr::mutate_all(mtcars[4:6, 1:5], as.character)) %>%
+#'          dplyr::add_row(mpg = "norm test:", cyl = "norm test:", disp = "norm test:", hp = "norm test:", drat = "norm test:") %>%
+#'          dplyr::add_row(mpg = "p = 0.43", cyl = "p < 0,001", disp = "p = 0,44", hp = "p = 0.004", drat = "p = 0.002") %>%
+#'          dplyr::bind_rows(dplyr::mutate_all(mtcars[7:9, 1:5], as.character)) %>%
+#'          dplyr::add_row(mpg = "population B", cyl = "population B", disp = "population B", hp = "population B", drat = "population B") %>%
+#'          dplyr::bind_rows(dplyr::mutate_all(mtcars[10:12, 1:5], as.character))
+#'t_df_struct <- list(data = t_data,
+#'                    header = list(row1 = rep("all columns", ncol(t_data)),
+#'                                  row2 = c(rep("1st column group", floor(ncol(t_data)/2)), rep("2st column group", ceiling(ncol(t_data)/2))),
+#'                                  row3 = names(t_data)),
+#'                    footer = list(row1 = rep("Note:", ncol(t_data)),
+#'                                  row2 = rep("Nothing special for this table", ncol(t_data)),
+#'                                  row3 = rep("Designation:", ncol(t_data)),
+#'                                  row4 = rep("NA - not available", ncol(t_data))),
+#'                    rows_to_merge = c(4, 8, 13),
+#'                    cells_to_merge = list(rect1 = list(rows = 1:2, columns = 1),
+#'                                          rect2 = list(rows = 14:15, columns = 4:5)),
+#'                    columns_to_merge = 5,
+#'                    table_width = NULL,
+#'                    font = 12,
+#'                    rows_as_footnote_title = c(1, 3),
+#'                    rows_as_inner_headers = c(4, 13),
+#'                    rows_section_init = 8,
+#'                    columns_left_align = c(2, 4),
+#'                    rows_bold_upper_bordered = 15,
+#'                    cells_color = list(cell1 = list(row = 15, column = 1),
+#'                                       cell2 = list(row = 16, column = 2)),
+#'                    rows_p_value_color = 9)
+#'CreateFLX(t_df_struct)
+
 CreateFLX <- function(df_struct){
   if(is.null(df_struct$data)){
     stop(paste0("The structure with no data is sent into", deparse(sys.call())))
   }
 
   #default settings (constant structure)
-  settings_default <- c("table_width" = rep(6.54/ncol(df_struct$data), ncol(df_struct$data)),
-                        "font" = 10L,
-                        "rows_as_footnote_title" = 1L,
-                        "columns_left_align" = NULL,
-                        "rows_as_inner_headers" = NULL,
-                        "rows_section_init" = NULL,
-                        "rows_to_merge" = NULL,
-                        "columns_to_merge" = NULL,
-                        "cells_to_merge" = NULL,
-                        "rows_bold_upper_bordered" = NULL,
-                        "cells_color" = NULL,
-                        "rows_p_value_color" = NULL
-  )
+  settings_default <- list(table_width = rep(6.54/ncol(df_struct$data), ncol(df_struct$data)),
+                           font = 10L,
+                           rows_as_footnote_title = 1L,
+                           columns_left_align = NULL,
+                           rows_as_inner_headers = NULL,
+                           rows_section_init = NULL,
+                           rows_to_merge = NULL,
+                           columns_to_merge = NULL,
+                           cells_to_merge = NULL,
+                           rows_bold_upper_bordered = NULL,
+                           cells_color = NULL,
+                           rows_p_value_color = NULL
+                           )
 
   #modify some of not specified settings of the given structure in accordance with default settings
   #note: the names of settings_default should correspond to the settings names of the given structure
@@ -327,7 +360,7 @@ DocExportStyles <- function(){
   rez$header_style <- list(text = officer::fp_text(color = "black", font.size = 12, bold = TRUE, italic = FALSE, underlined = FALSE, font.family = "Times New Roman", vertical.align = "baseline", shading.color = "transparent"),
                            par = officer::fp_par(text.align = "center"))
 
-  rez$body_style <- list(text = officer::update(rez$header_style$text, bold = FALSE))
+  rez$body_style <- list(text = stats::update(rez$header_style$text, bold = FALSE))
 
   rez$figure_style <- list(height = 4, width = 6, aligned = "center")
 
@@ -348,9 +381,20 @@ DocExportStyles <- function(){
 #' @export
 #'
 #' @examples
+#' t_flx_obj <- CreateFLX(list(data = mtcars[1:8,]))
+#' t_flname <- paste0(getwd(), "/test_table.docx")
+#' DocExport(filename = t_flname,
+#'           tables = list(table1 = t_flx_obj),
+#'           tables_title = list(table1 = "Test table"))
+#' t_flx_obj_sec <- CreateFLX(list(data = mtcars[9:16,]))
+#' t_flname_sec <- paste0(getwd(), "/test_table_second.docx")
+#' DocExport(filename = t_flname_sec,
+#'           tables = list(table2 = t_flx_obj_sec),
+#'           tables_title = list(table2 = "Test table second"),
+#'           base_docx_filename = t_flname)
 DocExport <- function(filename, tables = NULL, tables_title = NULL, figures = NULL, figures_title = NULL, base_docx_filename = NULL){
 
-  st <- DocDefaultStyles()
+  st <- DocExportStyles()
 
   #open a doc file to modify
   doc <- officer::read_docx(base_docx_filename)
@@ -377,7 +421,7 @@ DocExport <- function(filename, tables = NULL, tables_title = NULL, figures = NU
         officer::body_add_fpar(value = header) %>%
         flextable::body_add_flextable(value = tables[[table_name]], split = TRUE)
 
-      if(which(table_name, names(tables)) != length(tables)){
+      if(which(names(tables) == table_name) != length(tables)){
         #dont add page break after the last table inserted
         doc <- officer::body_add_break(doc)
       }
@@ -404,7 +448,7 @@ DocExport <- function(filename, tables = NULL, tables_title = NULL, figures = NU
                              style = st$figure_style$aligned) %>%
         officer::body_add_fpar(value = caption)
 
-      if(which(figure_name, names(figures)) != length(figures)){
+      if(which(names(figures) == figure_name) != length(figures)){
         #dont add page break after the last table inserted
         doc <- officer::body_add_break(doc)
       }
