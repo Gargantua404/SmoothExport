@@ -10,7 +10,7 @@
    where *dir_path* - is a directory where the archieve is stored.
 
  ## Macros usage
- Macroses, being wriiten on Visual Basic, are part of the Microsoft Office system on a local computer and are accessible from any Office applications (Word, Excel, Powerpoint). Next instruction describes the way to embed files with macroses into the Word:
+ Macroses, being written on Visual Basic, are part of the Microsoft Office system on a local computer and are accessible from any Office applications (Word, Excel, PowerPoint). The folowwing instructions describe the way to embed the files with macroses into an Office system through a Word document:
 
  1. In the control panel: **Developer -> Macroses (Alt + F8)**
  2. In a popped-up window: **Visual Basic**
