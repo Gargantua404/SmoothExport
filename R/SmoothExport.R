@@ -1,7 +1,7 @@
-#' SmoothPrintDf: package to convert R dataframes into flextable objects with capability of further export into Word files
+#' SmoothExport: package to convert R dataframes into flextable objects with capability of further export into Word files
 #'
 #'
-#' @name SmoothPrintDf
+#' @name SmoothExport
 #' @docType package
 #' @import magrittr
 
