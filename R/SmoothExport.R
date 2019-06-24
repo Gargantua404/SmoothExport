@@ -4,6 +4,7 @@
 #' @name SmoothPrintDf
 #' @docType package
 #' @import magrittr
+
 NULL
 
 #' @title Set cell borders of a flextable object
@@ -241,25 +242,34 @@ SetStyle <- function(df_flex, font, rows_as_footnote_title, rows_as_inner_header
 #' @export
 #'
 #' @examples
+#' # a table with a complex header and footer
+#' t_data <- head(mtcars)
 #' t_df_struct <- list(data = t_data,
 #'                     header = list(row1 = rep("all columns", ncol(t_data)),
-#'                                   row2 = c(rep("1st column groups", floor(ncol(t_data)/2)), rep("2st column groups", ceiling(ncol(t_data)/2))),
+#'                                   row2 = c(rep("1st column groups", floor(ncol(t_data)/2)),
+#'                                            rep("2st column groups", ceiling(ncol(t_data)/2))),
 #'                                   row3 = names(t_data)),
 #'                     footer = list(row1 = rep("Note:", ncol(t_data)),
 #'                                   row2 = rep("Nothing special for this table", ncol(t_data))))
 #' CreateFLX(t_df_struct)
 #'
+#'# a table with all possible design modifications
 #'t_data <- dplyr::mutate_all(mtcars[1:3, 1:5], as.character) %>%
-#'          dplyr::add_row(mpg = "population A", cyl = "population A", disp = "population A", hp = "population A", drat = "population A")  %>%
+#'          dplyr::add_row(mpg = "population A", cyl = "population A", disp = "population A",
+#'                         hp = "population A", drat = "population A")  %>%
 #'          dplyr::bind_rows(dplyr::mutate_all(mtcars[4:6, 1:5], as.character)) %>%
-#'          dplyr::add_row(mpg = "norm test:", cyl = "norm test:", disp = "norm test:", hp = "norm test:", drat = "norm test:") %>%
-#'          dplyr::add_row(mpg = "p = 0.43", cyl = "p < 0,001", disp = "p = 0,44", hp = "p = 0.004", drat = "p = 0.002") %>%
+#'          dplyr::add_row(mpg = "norm test:", cyl = "norm test:", disp = "norm test:",
+#'                         hp = "norm test:", drat = "norm test:") %>%
+#'          dplyr::add_row(mpg = "p = 0.43", cyl = "p < 0,001", disp = "p = 0,44",
+#'                         hp = "p = 0.004", drat = "p = 0.002") %>%
 #'          dplyr::bind_rows(dplyr::mutate_all(mtcars[7:9, 1:5], as.character)) %>%
-#'          dplyr::add_row(mpg = "population B", cyl = "population B", disp = "population B", hp = "population B", drat = "population B") %>%
+#'          dplyr::add_row(mpg = "population B", cyl = "population B", disp = "population B",
+#'                         hp = "population B", drat = "population B") %>%
 #'          dplyr::bind_rows(dplyr::mutate_all(mtcars[10:12, 1:5], as.character))
 #'t_df_struct <- list(data = t_data,
 #'                    header = list(row1 = rep("all columns", ncol(t_data)),
-#'                                  row2 = c(rep("1st column group", floor(ncol(t_data)/2)), rep("2st column group", ceiling(ncol(t_data)/2))),
+#'                                  row2 = c(rep("1st column group", floor(ncol(t_data)/2)),
+#'                                           rep("2st column group", ceiling(ncol(t_data)/2))),
 #'                                  row3 = names(t_data)),
 #'                    footer = list(row1 = rep("Note:", ncol(t_data)),
 #'                                  row2 = rep("Nothing special for this table", ncol(t_data)),
@@ -381,6 +391,7 @@ DocExportStyles <- function(){
 #' @export
 #'
 #' @examples
+#' #export simple flextable objects
 #' t_flx_obj <- CreateFLX(list(data = mtcars[1:8,]))
 #' t_flname <- paste0(getwd(), "/test_table.docx")
 #' DocExport(filename = t_flname,
@@ -400,7 +411,7 @@ DocExport <- function(filename, tables = NULL, tables_title = NULL, figures = NU
   doc <- officer::read_docx(base_docx_filename)
 
   #in case this file was written to previously
-  if(!is.null(base_docx_filename)) doc <- officer:::body_add_break(doc)
+  if(!is.null(base_docx_filename)) doc <- officer::body_add_break(doc)
 
   #tables insert
   if(!is.null(tables)){
