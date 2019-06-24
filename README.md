@@ -5,7 +5,7 @@
  
 1. Download the .zip archived source files from GitHub;  
 2. Convert .zip archive into .tar.gz archive;
-3. In Rstudio console perform the following command:
-   utils::install.packages("your_dir//SmoothExport.tar.gz", repos = NULL, type = "source")
-   where your_dir - is a directory where the archieve is stored.
+3. In Rstudio console perform the following command:\
+   utils::install.packages("dir_path//SmoothExport.tar.gz", repos = NULL, type = "source")\
+   where *dir_path* - is a directory where the archieve is stored.
    
