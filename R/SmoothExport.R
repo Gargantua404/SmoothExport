@@ -227,8 +227,8 @@ SetStyle <- function(df_flex, font, rows_as_footnote_title, rows_as_inner_header
 #' \item{\strong{footer}}{a named list of ordered arrays representing the footer part of the flextable object. Each element in the list corresponds to the new row in a flextable footer part. A flextable object may include no footer part}
 #' \item{\strong{rows_to_merge}}{indexes of rows to merge vertically in a body part}
 #' \item{\strong{columns_to_merge}}{indexes of columns to merge horizontally in a body part}
-#' \item{\strong{cells_to_merge}}{a list of elements represanting the rectangular area of the dataframe body to merge. Each element is a list consisting of two subelements: \emph{rows} and \emph{columns}, each of which is a range of rows or columns respectively defining the rectangular. All cells in either footer or header parts with the same value are merged automatically}
-#' \item{\strong{table_width}}{an array of column widths. If omitted, columns widths are uniformly distributed provided that the table total width equals to 6.54 inches corresponding to a Word vertical oriented table}
+#' \item{\strong{cells_to_merge}}{a list of elements representing the rectangular area of the dataframe body to merge. Each element is a list consisting of two subelements: \emph{rows} and \emph{columns}, each of which is a range of rows or columns respectively defining the rectangular. All cells in either footer or header parts with the same value are merged automatically}
+#' \item{\strong{table_width}}{an array of column widths (in cm). If omitted, columns widths are uniformly distributed provided that the table total width equals to 6.54 inches (approx. 16.61 cm) corresponding to a Word vertical oriented table}
 #' \item{\strong{font}}{font size of all data in a table. If omitted, 10 points is used}
 #' \item{\strong{rows_as_footnote_title}}{indexes of rows corresponding to the local titles which should be highlighted with italic font (Note, Designation, etc.) in a footer part. The value of this element doesn't effect on the generated flextable in case no footer is provided. If omitted, the first row is highlighted}
 #' \item{\strong{columns_left_align}}{indexes of columns to left align in a body part}
@@ -297,7 +297,7 @@ CreateFLX <- function(df_struct){
   }
 
   #default settings (constant structure)
-  settings_default <- list(table_width = rep(6.54/ncol(df_struct$data), ncol(df_struct$data)),
+  settings_default <- list(table_width = rep(6.54*2.54/ncol(df_struct$data), ncol(df_struct$data)),
                            font = 10L,
                            rows_as_footnote_title = 1L,
                            columns_left_align = NULL,
