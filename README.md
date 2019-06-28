@@ -4,7 +4,7 @@
  This bug should be fixed in >= 3.6.0 R versions. Here is another way to setup the package:*
 
 There are two ways to install the package 
-###### Manual installation|
+###### Manual installation
 1. Download the .zip archived source files from GitHub
 2. In Rstudio console perform the following command:\
    `devtools::install_local("dir_path\\SmoothExport.zip", dependencies = c("Depends, Imports"))`\
