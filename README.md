@@ -7,7 +7,7 @@ There are two ways to install the package
 ###### Manual installation
 1. Download the .zip archived source files from GitHub
 2. In Rstudio console perform the following command:\
-   `devtools::install_local("dir_path\\SmoothExport.zip", dependencies = c("Depends, Imports"))`\
+   `devtools::install_local("dir_path\\SmoothExport-master.zip", dependencies = c("Depends, Imports"))`\
    where *dir_path* - is a directory where the archieve is stored
 
 ###### Automatic installation
