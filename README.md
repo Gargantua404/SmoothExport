@@ -3,17 +3,11 @@
  *There is a bug in R (3.4.0) which prevents users from installing the package from GitHub by executing `devtools::install_github()` function.
  This bug should be fixed in >= 3.6.0 R versions. Here is another way to setup the package:*
 
-There are two ways to install the package 
-###### Manual installation
-1. Download the .zip archived source files from GitHub
-2. In Rstudio console perform the following command:\
-   `devtools::install_local("dir_path\\SmoothExport-master.zip", dependencies = c("Depends, Imports"))`\
-   where *dir_path* - is a directory where the archieve is stored
-
-###### Automatic installation
 1. Download the .zip archived source files from GitHub
 2. Convert the .zip archive into the .tar.gz archive
 3. Pass the generated archieve to **Packages -> Install**
+
+*Note: It may require installing dependant packages*  
 
  ## Macros usage
  Macroses, being written on Visual Basic, are part of the Microsoft Office system on a local computer and are accessible from any Office applications (Word, Excel, PowerPoint). The following instructions describe the way to embed the files with macroses into an Office system through a Word document:
